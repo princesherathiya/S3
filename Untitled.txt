@@ -1,0 +1,81 @@
+
+
+import numpy as np
+import pandas as pd
+
+# Create Graph
+graph = {}
+
+def add_edge(u, v, w):
+    graph.setdefault(u, []).append((v, w))
+    graph.setdefault(v, []).append((u, w))
+
+add_edge('A', 'B', 1)
+add_edge('A', 'C', 4)
+add_edge('B', 'C', 2)
+add_edge('B', 'D', 3)
+
+nodes = sorted(graph.keys())
+n = len(nodes)
+
+print("Adjacency List:")
+print(graph)
+
+# Adjacency Matrix
+A = np.zeros((n, n), dtype=int)
+
+for u in graph:
+    for v, w in graph[u]:
+        A[nodes.index(u)][nodes.index(v)] = w
+
+print("\nAdjacency Matrix:")
+print(pd.DataFrame(A, index=nodes, columns=nodes))
+
+# Degree Matrix
+degree = np.sum(A != 0, axis=1)
+D = np.diag(degree)
+
+print("\nDegree Matrix:")
+print(D)
+
+# Laplacian Matrix
+L = D - (A != 0).astype(int)
+
+print("\nLaplacian Matrix:")
+print(L)
+
+# Transition Probability Matrix
+P = np.zeros((n, n))
+
+for i in range(n):
+    total = sum(A[i] != 0)
+    if total != 0:
+        P[i] = (A[i] != 0) / total
+
+print("\nTransition Probability Matrix:")
+print(P)
+
+# Edge List
+edges = []
+
+for u in graph:
+    for v, w in graph[u]:
+        if nodes.index(u) < nodes.index(v):
+            edges.append((u, v, w))
+
+print("\nEdge List:")
+for edge in edges:
+    print(edge)
+
+# Incidence Matrix
+I = np.zeros((n, len(edges)), dtype=int)
+
+for k, (u, v, w) in enumerate(edges):
+    I[nodes.index(u)][k] = 1
+    I[nodes.index(v)][k] = 1
+
+print("\nIncidence Matrix:")
+print(pd.DataFrame(I, index=nodes))
+
+print("\nConclusion:")
+print("All five graph matrices calculated successfully.")
